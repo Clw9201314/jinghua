@@ -20,18 +20,18 @@ jobs:
         run: |
           curl -o StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
 
-      - name: Clean blockAds.plugin (pangolin+mitm)
+      - name: Clean blockAds.plugin (only specific domains)
         run: |
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b' blockAds_origin.plugin | awk '/^mitm/{exit} {print}' > blockAds_clean.plugin
+          grep -vE 'sf3-fe-tos\.pglstatp-toutiao\.com|pglstatp-toutiao\.com' blockAds_origin.plugin > blockAds_clean.plugin
 
-      - name: Clean StartUpAds.plugin (pangolin+mitm)
+      - name: Clean StartUpAds.plugin (only specific domains)
         run: |
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b' StartUpAds_origin.plugin | awk '/^mitm/{exit} {print}' > StartUpAds_clean.plugin
+          grep -vE 'sf3-fe-tos\.pglstatp-toutiao\.com|pglstatp-toutiao\.com' StartUpAds_origin.plugin > StartUpAds_clean.plugin
 
       - name: Commit and Push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add blockAds_clean.plugin StartUpAds_clean.plugin
-          git commit -m "Auto update clean plugins" || echo "No changes to commit"
+          git commit -m "Auto clean plugins: remove specific domains" || echo "No changes to commit"
           git push
