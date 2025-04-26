@@ -2,8 +2,8 @@ name: Clean BlockAds Plugin
 
 on:
   schedule:
-    - cron: "0 2 * * *"  # 每天凌晨2点自动执行
-  workflow_dispatch:    # 也支持手动点按钮运行
+    - cron: "0 18 * * *"  # 每天凌晨2点（UTC+0，所以是北京时间早上2点）
+  workflow_dispatch:
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-
+        
       - name: Fetch latest blockAds.plugin
         run: |
           curl -o blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
@@ -20,12 +20,12 @@ jobs:
         run: |
           grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b' blockAds_origin.plugin > blockAds_clean.plugin
 
-           - name: Commit and Push
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and Push
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add blockAds_clean.plugin
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add blockAds_clean.plugin || echo "Nothing to add"
           git commit -m "Auto update clean blockAds.plugin" || echo "No changes to commit"
-          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git HEAD:main
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
