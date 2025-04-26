@@ -13,65 +13,47 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Fetch blockAds.plugin
+      - name: Fetch all plugins
         run: |
           curl -o blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
-
-      - name: Fetch StartUpAds.plugin
-        run: |
           curl -o StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
-
-      - name: Fetch BlockAdvertisers.plugin
-        run: |
           curl -o BlockAdvertisers_origin.plugin https://kelee.one/Tool/Loon/Plugin/BlockAdvertisers.plugin
-
-      - name: Fetch Remove_ads_by_keli.plugin
-        run: |
           curl -o Remove_ads_by_keli_origin.plugin https://kelee.one/Tool/Loon/Plugin/Remove_ads_by_keli.plugin
 
-      - name: Clean blockAds.plugin
+      - name: Convert encoding (GBK to UTF-8)
+        run: |
+          iconv -f gbk -t utf-8 BlockAdvertisers_origin.plugin -o BlockAdvertisers_utf8.plugin || cp BlockAdvertisers_origin.plugin BlockAdvertisers_utf8.plugin
+          iconv -f gbk -t utf-8 Remove_ads_by_keli_origin.plugin -o Remove_ads_by_keli_utf8.plugin || cp Remove_ads_by_keli_origin.plugin Remove_ads_by_keli_utf8.plugin
+
+      - name: Clean plugins
         run: |
           awk '
           /^mitm/ {mitm=1; print; next}
           mitm && /^[^ ]/ {mitm=0}
           mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
           {print}
-          ' blockAds_origin.plugin > temp_blockAds.plugin
+          ' blockAds_origin.plugin | grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' > blockAds_clean.plugin
 
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_blockAds.plugin > blockAds_clean.plugin
-
-      - name: Clean StartUpAds.plugin
-        run: |
           awk '
           /^mitm/ {mitm=1; print; next}
           mitm && /^[^ ]/ {mitm=0}
           mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
           {print}
-          ' StartUpAds_origin.plugin > temp_StartUpAds.plugin
+          ' StartUpAds_origin.plugin | grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' > StartUpAds_clean.plugin
 
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_StartUpAds.plugin > StartUpAds_clean.plugin
-
-      - name: Clean BlockAdvertisers.plugin
-        run: |
           awk '
           /^mitm/ {mitm=1; print; next}
           mitm && /^[^ ]/ {mitm=0}
           mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
           {print}
-          ' BlockAdvertisers_origin.plugin > temp_BlockAdvertisers.plugin
+          ' BlockAdvertisers_utf8.plugin | grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' > BlockAdvertisers_clean.plugin
 
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_BlockAdvertisers.plugin > BlockAdvertisers_clean.plugin
-
-      - name: Clean Remove_ads_by_keli.plugin
-        run: |
           awk '
           /^mitm/ {mitm=1; print; next}
           mitm && /^[^ ]/ {mitm=0}
           mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
           {print}
-          ' Remove_ads_by_keli_origin.plugin > temp_Remove_ads_by_keli.plugin
-
-          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_Remove_ads_by_keli.plugin > Remove_ads_by_keli_clean.plugin
+          ' Remove_ads_by_keli_utf8.plugin | grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' > Remove_ads_by_keli_clean.plugin
 
       - name: Commit and Push
         run: |
