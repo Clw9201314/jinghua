@@ -1,49 +1,52 @@
-name: Clean Four Plugins
+name: Clean Two Plugins
 
 on:
   schedule:
-    - cron: "0 2 * * *"
+    - cron: "0 2 * * *"  # 每天凌晨2点
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Fetch all plugins (binary safe)
+      - name: Fetch latest plugins
         run: |
-          curl -L --output blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
-          curl -L --output StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
-          curl -L --output BlockAdvertisers_origin.plugin https://kelee.one/Tool/Loon/Plugin/BlockAdvertisers.plugin
-          curl -L --output Remove_ads_by_keli_origin.plugin https://kelee.one/Tool/Loon/Plugin/Remove_ads_by_keli.plugin
+          curl -L -o blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
+          curl -L -o StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
 
-      - name: Clean plugins
+      - name: Clean blockAds.plugin (保留MITM，清理指定)
         run: |
-          # 定义通用清理函数
-          clean_plugin() {
-            input="$1"
-            output="$2"
-            awk '
-            BEGIN{mitm=0}
-            /^mitm/ {mitm=1; print; next}
-            mitm==1 && /^[^ ]/ {mitm=0}
-            mitm==1 && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
-            /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)/ {next}
-            {print}
-            ' "$input" > "$output"
-          }
+          awk '
+          BEGIN {mitm=0}
+          /^mitm/ {mitm=1; print; next}
+          mitm==1 && /^[^ ]/ {mitm=0}
+          mitm==1 && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
+          {print}
+          ' blockAds_origin.plugin > temp_blockAds.plugin
 
-          clean_plugin blockAds_origin.plugin blockAds_clean.plugin
-          clean_plugin StartUpAds_origin.plugin StartUpAds_clean.plugin
-          clean_plugin BlockAdvertisers_origin.plugin BlockAdvertisers_clean.plugin
-          clean_plugin Remove_ads_by_keli_origin.plugin Remove_ads_by_keli_clean.plugin
+          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_blockAds.plugin > blockAds_clean.plugin
+
+      - name: Clean StartUpAds.plugin (保留MITM，清理指定)
+        run: |
+          awk '
+          BEGIN {mitm=0}
+          /^mitm/ {mitm=1; print; next}
+          mitm==1 && /^[^ ]/ {mitm=0}
+          mitm==1 && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
+          {print}
+          ' StartUpAds_origin.plugin > temp_StartUpAds.plugin
+
+          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_StartUpAds.plugin > StartUpAds_clean.plugin
 
       - name: Commit and Push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add *.plugin || true
+          git pull --rebase origin $(git rev-parse --abbrev-ref HEAD) || echo "No changes to pull"
+          git add blockAds_clean.plugin StartUpAds_clean.plugin || true
           git commit -m "Auto update clean plugins" || echo "No changes to commit"
           git push || echo "No changes to push"
