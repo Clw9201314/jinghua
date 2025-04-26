@@ -1,9 +1,9 @@
-name: Clean BlockAds Plugin
+name: Clean Both Plugins
 
 on:
   schedule:
     - cron: "0 2 * * *"  # 每天凌晨2点自动执行
-  workflow_dispatch:    # 支持手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,14 +16,22 @@ jobs:
         run: |
           curl -o blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
 
-      - name: Clean pangolin rules and mitm
+      - name: Fetch latest StartUpAds.plugin
+        run: |
+          curl -o StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
+
+      - name: Clean blockAds.plugin (pangolin+mitm)
         run: |
           grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b' blockAds_origin.plugin | awk '/^mitm/{exit} {print}' > blockAds_clean.plugin
+
+      - name: Clean StartUpAds.plugin (pangolin+mitm)
+        run: |
+          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b' StartUpAds_origin.plugin | awk '/^mitm/{exit} {print}' > StartUpAds_clean.plugin
 
       - name: Commit and Push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add blockAds_clean.plugin
-          git commit -m "Auto update clean blockAds.plugin" || echo "No changes to commit"
+          git add blockAds_clean.plugin StartUpAds_clean.plugin
+          git commit -m "Auto update clean plugins" || echo "No changes to commit"
           git push
