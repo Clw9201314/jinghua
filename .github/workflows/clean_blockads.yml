@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-        
+
       - name: Fetch latest blockAds.plugin
         run: |
           curl -o blockAds_origin.plugin https://raw.githubusercontent.com/fmz200/wool_scripts/main/Loon/plugin/blockAds.plugin
