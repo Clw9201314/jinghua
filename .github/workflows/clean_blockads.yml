@@ -2,12 +2,13 @@ name: Clean Both Plugins
 
 on:
   schedule:
-    - cron: "0 2 * * *"  # 每天凌晨2点自动执行
+    - cron: "0 2 * * *" # 每天凌晨2点
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -20,18 +21,32 @@ jobs:
         run: |
           curl -o StartUpAds_origin.plugin https://raw.githubusercontent.com/ddgksf2013/Plugins/main/Adblock/StartUpAds.plugin
 
-      - name: Clean blockAds.plugin (only specific domains)
+      - name: Clean blockAds.plugin (保留MITM，清理指定)
         run: |
-          grep -vE 'sf3-fe-tos\.pglstatp-toutiao\.com|pglstatp-toutiao\.com' blockAds_origin.plugin > blockAds_clean.plugin
+          awk '
+          /^mitm/ {mitm=1; print; next}
+          mitm && /^[^ ]/ {mitm=0}
+          mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
+          {print}
+          ' blockAds_origin.plugin > temp_blockAds.plugin
 
-      - name: Clean StartUpAds.plugin (only specific domains)
+          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_blockAds.plugin > blockAds_clean.plugin
+
+      - name: Clean StartUpAds.plugin (保留MITM，清理指定)
         run: |
-          grep -vE 'sf3-fe-tos\.pglstatp-toutiao\.com|pglstatp-toutiao\.com' StartUpAds_origin.plugin > StartUpAds_clean.plugin
+          awk '
+          /^mitm/ {mitm=1; print; next}
+          mitm && /^[^ ]/ {mitm=0}
+          mitm && /pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com/ {next}
+          {print}
+          ' StartUpAds_origin.plugin > temp_StartUpAds.plugin
+
+          grep -vE 'pangolin-sdk-toutiao|pangolin-sdk-toutiao1|pangolin-sdk-toutiao-b|api-access\.pangolin-sdk-toutiao\.com|api\/ad\/union\/sdk\/(get_ads|stats|settings)' temp_StartUpAds.plugin > StartUpAds_clean.plugin
 
       - name: Commit and Push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add blockAds_clean.plugin StartUpAds_clean.plugin
-          git commit -m "Auto clean plugins: remove specific domains" || echo "No changes to commit"
-          git push
+          git add blockAds_clean.plugin StartUpAds_clean.plugin || true
+          git commit -m "Auto update clean plugins" || echo "No changes to commit"
+          git push || echo "No changes to push"
