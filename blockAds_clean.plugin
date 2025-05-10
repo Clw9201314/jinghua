@@ -52,7 +52,7 @@ filterTopReplies=switch,true,tag=哔哩哔哩-[评论区]过滤置顶评论广�
 
 bilimanhua_enable = switch,true,false,tag=哔哩哔哩漫画-脚本开关
 bohejmkh_enable = switch,true,false,tag=薄荷健康-脚本开关
-cdyytmqi_enable = switch,true,false,tag=彩云天气-脚本开关
+cdyytmqi_enable = switch,false,true,tag=彩云天气-脚本开关
 cdnngogo_enable = switch,true,false,tag=菜鸟裹裹-脚本开关
 cdxb_enable = switch,true,false,tag=财新-脚本开关
 davsdmpk_enable = switch,true,false,tag=大众点评-脚本开关
@@ -947,6 +947,8 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 reject
 # 新人弹窗
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/getHomeAdPop reject
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails response-body-replace-regex suspension fmz200
+# 开屏广告及首页推荐流及底部状态栏优化
+^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/(?>bottomNavi|homeFlowDetail) script-response-body https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js
 
 # > 叮嗒出行
 # hostname = img.admobile.top, webcdn.m.qq.com
@@ -3562,12 +3564,12 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https?:\/\/direct\.z-bank\.com\/portal\/AdvertImageDownLoad4Mobile\.do reject-200
 
 # > 涨乐财富通
-# hostname = c.zhangle.com, live.inst-service.htsc.com, geetest.htsc.com, 119.29.29.98
+# hostname = c.zhangle.com, live.inst-service.htsc.com, geetest.htsc.com, 119.29.29.*
 # 开屏广告 弹窗广告
 ^https?:\/\/c\.zhangle\.com\/pic\/mktg\/diversity\/.+\.jpg$ reject-dict
 ^https?:\/\/live\.inst-service\.htsc\.com\/live reject-dict
 ^https?:\/\/geetest\.htsc\.com:8888\/pre_get_token reject-200
-^https?:\/\/119\.29\.29\.98\/d reject-200
+^https?:\/\/119\.29\.29\.\d+\/d reject-200
 
 # > 知乎
 # hostname = api.zhihu.com, www.zhihu.com, appcloud2.zhihu.com, m-cloud.zhihu.com, zhuanlan.zhihu.com, link.zhihu.com
