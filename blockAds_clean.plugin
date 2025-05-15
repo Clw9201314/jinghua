@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-05-13 13:57:00
+#!date=2025-05-14 20:00:00
 #!support=支持约511款APP/小程序
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
@@ -2485,7 +2485,7 @@ https://apis.lifeweek.com.cn/api/baseConfig/getIosNewConfig reject
 ^https?:\/\/imgx\.jampp\.com\/imgsrv\/tn reject-img
 
 # TestFlight 国区下载修正
-^https:\/\/testflight\.apple\.com\/v2\/accounts\/.*\/apps\/\d*\/builds\/\d*\/install$ request-body-replace-regex "storefrontId"\x20:\x20.*, "storefrontId":"143441-19,29",enable={tf_enable}
+# ^https:\/\/testflight\.apple\.com\/v2\/accounts\/.*\/apps\/\d*\/builds\/\d*\/install$ request-body-replace-regex "storefrontId"\x20:\x20.*, "storefrontId":"143441-19,29"
 
 # > TT语音
 # hostname = ga-album-cdnqn.52tt.com
@@ -2505,6 +2505,11 @@ https://apis.lifeweek.com.cn/api/baseConfig/getIosNewConfig reject
 # > top-widget
 # hostname = top-widgets-api.xiaozujian.com
 ^https?:\/\/top-widgets-api\.xiaozujian\.com\/api\/ad\/config reject
+
+# > 台铃智能
+# hostname = www.tailgdd.com
+# 开屏广告
+^https://www\.tailgdd\.com/v8/smart/app/config/get$ response-body-json-replace data {}
 
 # > 天府市民云
 # hostname = tfsmy.chengdu.gov.cn, tft-app.cdtft.cn
@@ -2923,6 +2928,12 @@ https?:\/\/(ipv4|interface\d?)\.music\.163.com\/e?api\/ad reject-dict
 # hostname = api.jr.mi.com
 ^https?:\/\/api\.jr\.mi\.com\/v\d\/adv\/ reject-200
 ^https?:\/\/api\.jr\.mi\.com\/jr\/api\/playScreen reject-200
+
+# > 小爱音箱
+# hostname = info.mina.xiaoaisound.com
+^https?:\/\/info\.mina\.xiaoaisound\.com\/advertise(?!\/banner) reject
+^https?:\/\/info\.mina\.xiaoaisound\.com\/payGuide\/userCenter reject
+^https?:\/\/info\.mina\.xiaoaisound\.com\/popup reject-dict
 
 # > 米家
 # hostname = home.mi.com
