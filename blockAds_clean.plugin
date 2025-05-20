@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-05-14 20:00:00
+#!date=2025-05-19 20:30:00
 #!support=支持约511款APP/小程序
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
@@ -59,6 +59,7 @@ davsdmpk_enable = switch,true,false,tag=大众点评-脚本开关
 dshxfg_enable = switch,true,false,tag=动画疯-脚本开关
 didiiuxk_enable = switch,true,false,tag=滴滴出行-脚本开关
 dyls_enable = switch,true,false,tag=电影猎手-脚本开关
+ddmc_enable = switch,true,false,tag=叮咚买菜-脚本开关
 flightradar24_enable = switch,true,false,tag=Flightradar24-脚本开关
 fwke_enable = switch,true,false,tag=飞客茶馆-脚本开关
 ffbi_enable = switch,true,false,tag=粉笔-脚本开关
@@ -80,6 +81,7 @@ mddjba_enable = switch,true,false,tag=买单吧-脚本开关
 mhgotv_enable = switch,true,false,tag=芒果TV-脚本开关
 mafgwo_enable = switch,true,false,tag=马蜂窝-脚本开关
 mdmd_enable = switch,true,false,tag=脉脉-脚本开关
+meiyou_enable = switch,true,false,tag=美柚-脚本开关
 pupuicui_enable = switch,true,false,tag=朴朴超市-脚本开关
 quda_enable = switch,true,false,tag=去哒-脚本开关
 reddit_enable = switch,true,false,tag=Reddit-脚本开关
@@ -964,15 +966,25 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 reject
 ^https?:\/\/mapi\.dangdang\.com\/index\.php\?action=init reject
 
 # > 叮咚买菜
-# hostname = maicai.api.ddxq.mobi
+# hostname = maicai.api.ddxq.mobi, gw.api.ddxq.mobi, user.api.ddxq.mobi
 # 开屏广告
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/advert\/ reject
-^https?:\/\/maicai\.api\.ddxq\.mobi\/vip\/getVipAd reject-dict
-# 新人弹窗
+# 首页弹窗
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/getHomeAdPop reject
+# VIP开通弹窗
+^https?:\/\/maicai\.api\.ddxq\.mobi\/vip\/getVipAd reject-dict
+# 首页悬浮窗
 ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/newDetails response-body-replace-regex suspension fmz200
-# 开屏广告及首页推荐流及底部状态栏优化
-^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/(?>bottomNavi|homeFlowDetail) script-response-body https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js
+# 我的页VIP栏净化
+^https?:\/\/gw\.api\.ddxq\.mobi\/vip-app-service\/vip\/my\/page\/advertising reject
+# 我的页弹窗(暂未启用)
+^https:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/queryMyPagePopup reject-dict
+# 我的页-猜你喜欢
+^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/userLike reject-dict
+# 购物车顶部VIP横条
+^https?:\/\/maicai\.api\.ddxq\.mobi\/cart\/vipGuide reject-dict
+# 购物车-猜你喜欢
+^https?:\/\/maicai\.api\.ddxq\.mobi\/order\/getRecommend reject-dict
 
 # > 叮嗒出行
 # hostname = img.admobile.top, webcdn.m.qq.com
@@ -1265,7 +1277,7 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 
 # > 广汽本田
 # hostname = gha.ghac.cn
-^https?:\/\/gha\.ghac\.cn\:8081\/base\/app\/api\/ad\/query\?adType=1 reject-dict
+# ^https?:\/\/gha\.ghac\.cn\:8081\/base\/app\/api\/ad\/query\?adType=1 reject-dict
 
 # > 怪兽充电 微信小程序
 # hostname = aag.enmonster.com
@@ -1834,7 +1846,7 @@ http:\/\/dili.sqcosmos.com\/jiekou\/endpage\/ad reject-dict
 ^https?:\/\/cdb\.meituan\.com\/marketing\/source\/getPageSlotList reject-dict
 
 # > 美柚
-# hostname = x.seeyouyima.com,axxd.xmseeyouyima.com
+# hostname = x.seeyouyima.com, axxd.xmseeyouyima.com, config-service.seeyouyima.com
 ^http:\/\/x\.seeyouyima\.com\/adx\/staticstics\? reject
 ^https:\/\/axxd\.xmseeyouyima\.com\/ad\/ reject
 ^https:\/\/axxd\.xmseeyouyima\.com\/ad_statistics\? reject
@@ -2950,14 +2962,19 @@ https?:\/\/(ipv4|interface\d?)\.music\.163.com\/e?api\/ad reject-dict
 ^https?:\/\/upload-bbs\.mihoyo\.com\/upload\/202[2-9]{1}\/[0-9]{2}\/[0-9]{2}\/[a-z0-9]{32}_[a-z0-9]{19}\.(jpg|png)$ reject-200
 
 # > 雪球
-# hostname = api.xueqiu.com, xqimg.imedao.com
-# 开屏广告 感谢【Runestoner】分享
-^https?:\/\/api\.xueqiu\.com\/brand\/search\/v1\.json\? reject
-^https?:\/\/xqimg\.imedao\.com\/[a-z0-9]{24}\.jpg$ reject-200
-# 感谢【Joe Joy】分享
-^https?:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json\? reject-dict
-# 去除首页的广告
-^https?:\/\/api.xueqiu.com\/ucprofile\/api\/user\/batchGetUserBasicInfo.json reject-dict
+# hostname = api.xueqiu.com, open.xueqiu.com, stock.xueqiu.com, 39.103.79.14, 39.106.97.84, 47.95.49.75, 101.201.62.20, 101.201.62.26, 101.201.175.228, 124.250.48.3, 182.92.145.50, 182.92.251.113
+^https:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json\?channel=1&height=932 reject-dict
+^https:\/\/open\.xueqiu\.com\/mpaas\/config\/content\?.+home_visitor_relation_config reject-dict
+^https:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json\?channel=1&location=0&model=6&page=4 reject-dict
+^https:\/\/api\.xueqiu\.com\/snowpard\/launch_strategy\/query\.json\?channel=1&location=0&model=1&page=(4|6) reject-dict
+^https:\/\/api\.xueqiu\.com\/ucprofile\/api\/user\/batchGetUserBasicInfo\.json reject-dict
+^https:\/\/api\.xueqiu\.com\/lightsnow\/launch\/plan\/bee\/query\.json\?channel=1&ip_label=&label_json=.+new_customer=1 reject-dict
+^https:\/\/api\.xueqiu\.com\/lightsnow\/optional\/banner\/query\.json reject-dict
+^https:\/\/open\.xueqiu\.com\/mpaas\/config\/content\?.+cube_detail_bottom_operation_trade_button reject-dict
+^https:\/\/api\.xueqiu\.com\/recommend-proxy\/card\/zj_card\.json\?feed_id=207 reject-dict
+^https:\/\/api\.xueqiu\.com\/recommend-proxy\/card\/portfolio_tab_symbol\.json reject-dict
+^https:\/\/stock\.xueqiu\.com\/v5\/stock\/group\/recommend\/default\/list\.json reject-dict
+^https:\/\/api\.xueqiu\.com\/livestream\/structure\/live\/hotCard\.json reject-dict
 
 # > 下厨房
 # hostname = api.xiachufang.com
@@ -3925,6 +3942,14 @@ http-response ^https?:\/\/common\.diditaxi\.com\.cn\/common\/v5 script-path=http
 # hostname = app-v1.ecoliving168.com
 http-response ^https:\/\/app-v1\.ecoliving168\.com\/api\/v1\/movie\/index_recommend\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/dianyinglieshou.js, requires-body=true, timeout=60, tag=电影猎手去广告, enable={dyls_enable}
 
+# > 叮咚买菜
+# 开屏广告及首页推荐流及底部状态栏优化
+http-response ^https?:\/\/maicai\.api\.ddxq\.mobi\/homeApi\/(?>bottomNavi|homeFlowDetail) script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js, requires-body=true, timeout=60, tag=叮咚买菜, enable={ddmc_enable}
+# 右下角AI
+http-response ^https?:\/\/maicai\.api\.ddxq\.mobi\/tool\/getConfig script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js, requires-body=true, timeout=60, tag=叮咚买菜, enable={ddmc_enable}
+# 我的页净化
+http-response ^https?:\/\/user\.api\.ddxq\.mobi\/userportal-service\/api\/v\d\/user\/queryMyPage script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/ddxq.js, requires-body=true, timeout=60, tag=叮咚买菜, enable={ddmc_enable}
+
 
 
 # >>>>>>>>>>>>>>> ✅ E ✅ <<<<<<<<<<<<<<
@@ -4054,6 +4079,10 @@ http-response ^https?:\/\/mapi\.mafengwo\.cn\/user\/profile\/get_(list|profile) 
 http-response ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/feed\/v6\/detail_recommend_feeds\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/maimai/maimai_ads.js, requires-body=true, timeout=60, tag=脉脉帖子末尾, enable={mdmd_enable}
 # 移除信息流和评论区大块广告 信息流广告focus_feed / 评论区广告gossip_detail_comment / 评论区广告feed_detail_comment?
 http-response ^https:\/\/(h3\.)?open\.taou\.com\/maimai\/(feed|gossip)\/v\d\/(focus_feed|gossip_detail_comment|feed_detail_comment?)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/maimai/maimai_ads.js, requires-body=true, timeout=60, tag=脉脉, enable={mdmd_enable}
+
+# > 美柚
+http-response ^https:\/\/config-service\.seeyouyima\.com\/api\/configs\/batch\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js, requires-body=true, timeout=60, tag=美柚App净化, enable={meiyou_enable}
+http-response ^https:\/\/config-service\.seeyouyima\.com\/api\/configs\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/meiyou/meiyou_ads.js, requires-body=true, timeout=60, tag=美柚App净化, enable={meiyou_enable}
 
 
 
