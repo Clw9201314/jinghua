@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-05-19 20:30:00
+#!date=2025-05-21 19:00:00
 #!support=支持约511款APP/小程序
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
@@ -83,6 +83,7 @@ mafgwo_enable = switch,true,false,tag=马蜂窝-脚本开关
 mdmd_enable = switch,true,false,tag=脉脉-脚本开关
 meiyou_enable = switch,true,false,tag=美柚-脚本开关
 pupuicui_enable = switch,true,false,tag=朴朴超市-脚本开关
+51job_enable = switch,true,false,tag=前程无忧-脚本开关
 quda_enable = switch,true,false,tag=去哒-脚本开关
 reddit_enable = switch,true,false,tag=Reddit-脚本开关
 rfrfuipk_enable = switch,true,false,tag=人人视频-脚本开关
@@ -2230,9 +2231,24 @@ https://access.mypikpak.com/access_controller/v1/area_accessible reject
 ^https?:\/\/facade-api\.black-unique\.com\/advertise\/v1\/get\?.* reject-dict
 
 # > 前程无忧 51Job
-# hostname = img01.51jobcdn.com
+# hostname = img01.51jobcdn.com, appapi.51job*.com, cupid.51job*.com
 # 去广告 (需卸载App重装) img01.51jobcdn.com
 ^https:\/\/img01\.51jobcdn\.com\/im\/mkt/(?:tg/((19|20)\d{2})banner/(?!jcgz2/)|\d{4}/bd/\d{4}/).*\.jpg reject
+# 屏蔽更新
+^https?:\/\/appapi\.51job(app)?\.com\/api\/util\/get_version reject-dict
+^https?:\/\/cupid\.51job(app)?\.com\/open\/noauth\/index\/last-version reject-dict
+# 开屏及营销广告
+^https?:\/\/appapi\.51job(app)?\.com\/api\/market\/(?>adtrace|get_launch|get_prompt) reject
+# 顶部弹窗
+^https?:\/\/cupid\.51job(app)?\.com\/open\/guide\/home-page-top reject
+# 首页右上角浮窗及右边浮标
+^https?:\/\/cupid\.51job(app)?\.com\/open\/user-task\/user\/task\/init reject
+# 底栏中央活动标
+^https?:\/\/cupid\.51job(app)?\.com\/open\/index\/notice-infos reject-dict
+# 弹窗广告
+^https?:\/\/cupid\.51job(app)?\.com\/launch-hub\/open\/noauth\/popUp reject
+# 推荐流信息广告
+^https?:\/\/cupid\.51job(app)?\.com\/open\/index\/recommend-infos reject
 
 # > 企迈 - QMAI(包含: 挪瓦咖啡、林里柠檬茶、霸王茶姬、陈香贵)
 # hostname = webapi.qmai.cn, miniapp.qmai.cn
@@ -2868,9 +2884,11 @@ https?:\/\/(ipv4|interface\d?)\.music\.163.com\/e?api\/ad reject-dict
 
 # > 网上国网
 # hostname = osg-static.sgcc.com.cn, osg-service.sgcc.com.cn
-#（倒计时还在）
-^https?:\/\/osg-static\.sgcc\.com\.cn\/omg-static\/.*.jpg reject-200
-^https?:\/\/osg-service\.sgcc\.com\.cn:18600\/emss-pfa-appset-front\/bootpageoutter\/ reject-dict
+^https?:\/\/(?>csc|osg)-service\.sgcc\.com\.cn:\d+\/emss-pfa-appset-front\/appForceUpdate reject
+^https?:\/\/(?>csc|osg)-service\.sgcc\.com\.cn:\d+\/emss-pfa-appset-front\/appSync\/getAppForceUpgrade reject
+^https?:\/\/(?>csc|osg)-service\.sgcc\.com\.cn:\d+\/emss-pfa-appset-front\/bootpageoutter\/ reject-dict
+^https?:\/\/(?>csc|osg)-service\.sgcc\.com\.cn:\d+\/.*\/app_api\/selectInfoByCondition reject-dict
+^https?:\/\/(?>csc|osg)-service\.sgcc\.com\.cn:\d+\/.*\/inner\/cache reject
 
 # > 威锋
 # hostname = api.wfdata.club
@@ -4108,6 +4126,12 @@ http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v7\?posit
 # > 去哒
 # 首页开屏广告 感谢【德克萨斯】分享
 http-response ^https?:\/\/iqushangwang\.8quan\.com\/index\.php\/i\/index\/index script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/QuDa.js, requires-body=true, timeout=60, tag=去哒, enable={quda_enable}
+
+# > 前程无忧 51Job
+# 推荐流信息广告
+http-response ^https?:\/\/cupid\.51job(app)?\.com\/open\/noauth\/recommend\/job-tab-dynamic script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js, requires-body=true, timeout=60, tag=去哒, enable={51job_enable}
+# 我的页净化
+http-response ^https?:\/\/cupid\.51job(app)?\.com\/open\/my-page\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/51job.js, requires-body=true, timeout=60, tag=去哒, enable={51job_enable}
 
 # > 企迈 - QMAI(包含: 挪瓦咖啡、林里柠檬茶、霸王茶姬、陈香贵)
 http-response ^https?:\/\/(?>webapi|miniapp)\.qmai\.cn\/web\/catering([0-9]-apiserver)?\/advertising\/ad\/advertiseInfo script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/qmai.js, requires-body=true, timeout=60, tag=企迈（挪瓦咖啡、林里柠檬茶、霸王茶姬、陈香贵）
