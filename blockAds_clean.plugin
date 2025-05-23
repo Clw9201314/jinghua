@@ -1298,6 +1298,11 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 
 
 # >>>>>>>>>>>>>>> ✅ H ✅ <<<<<<<<<<<<<<
+# > 哈富证券
+# hostname = emisdatacenteraws.hafoo.com
+# 横幅广告
+^https:\/\/emisdatacenteraws\.hafoo\.com\/ad\/api\/v2\/appMarket reject-dict
+
 # > 华彩生活
 # hostname = static.creditcard.hxb.com.cn
 ^https?:\/\/static\.creditcard\.hxb\.com\.cn\/mcube\/apps\/group\d\/M00\/00\/2[A-Z0-9]{1}\/amRG7WO.+\.jpg reject-200
@@ -1700,15 +1705,8 @@ https:\/\/static\.line-scdn\.net\/ad-sdk\/ reject
 https:\/\/nelo2-col\.linecorp\.com\/_store$ reject
 
 # > 拉卡拉
-# hostname = lamb.lakala.com, wallet.lakala.com
-# 首页横幅+进货+借款广告
-^https?:\/\/lamb\.lakala\.com\/lamo\/adv\/access\/queryMaterialUrl reject-dict
-# 补贴页面广告
-^https?:\/\/wallet\.lakala\.com\/m\/lama\/mgt\/activity\/bank\/query\/list reject-dict
-# 私享定制广告
-^https?:\/\/wallet\.lakala\.com\/m\/a\/lama\/mgt\/activity\/biz\/query\/byMerInfo reject-dict
-# 最新动态广告
-^https?:\/\/wallet\.lakala\.com\/m\/a\/message\/v\d\/fetchMsgList reject-dict
+# hostname = gmp.lakala.com, wallet.lakala.com
+^https:\/\/(?:gmp|wallet)\.lakala\.com\/(?:gmp\/openapi\/v2\/resource_space\/getResourceSpace|m\/(?:a\/lama\/mgt\/activity\/biz\/query\/byMerInfo|lama\/mgt\/activity\/(?:bank|biz)\/query\/list)) reject-dict
 
 # > 懒人听书
 # hostname = 118.178.214.118, dapis.mting.info, display.wting.info
@@ -3081,6 +3079,12 @@ https?:\/\/(ipv4|interface\d?)\.music\.163.com\/e?api\/ad reject-dict
 # hostname = www.xiaoxiongmeishu.com
 ^https:\/\/www\.xiaoxiongmeishu\.com\/api\/(home\/v1\/config\/appInit|s\/v1\/popup\/createCouponPopup) reject
 
+# > 小熊拦截
+# hostname = spamblocker-api.zeekstudio.com
+# 去除更新弹窗
+^https:\/\/spamblocker-api\.zeekstudio\.com\/profile reject-dict
+^https:\/\/spamblocker-api\.zeekstudio\.com\/checkVersion reject-dict
+
 # > 小佩宠物
 # hostname = api.petkit.cn
 ^https?:\/\/api\.petkit\.cn\/6\/\/device\/relatedProductsInfo reject-dict
@@ -3407,6 +3411,11 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https?:\/\/api\.ycapp\.yiche\.com\/yicheapp\/getadlist reject-img
 ^https?:\/\/cheyouapi\.ycapp\.yiche\.com\/appforum\/getusermessagecount reject-img
 
+# > 易捷加油
+# hostname = a.sinopecsales.com
+# 开屏广告
+^https?:\/\/a\.sinopecsales\.com\/app\/cms reject-dict
+
 # > 易捷加油小程序
 # hostname = ocrifs.ejoy.sinopec.com
 # 底部横幅广告
@@ -3471,11 +3480,6 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 # > 一刻相册
 # hostname = issuecdn.baidupcs.com
 ^https?:\/\/issuecdn\.baidupcs\.com\/issue\/netdisk\/ts_ad\/ reject-200
-
-# > 易捷加油
-# hostname = a.sinopecsales.com
-# 开屏广告
-^https?:\/\/a\.sinopecsales\.com\/app\/cms reject-dict
 
 # > 翼支付
 # hostname = mapi-app.bestpay.com.cn
@@ -4355,6 +4359,11 @@ http-response ^https:\/\/www\.zhihu\.com\/api\/v4\/(?:articles|answers)\/\d+\/re
 # 其他 - 服务器推送配置
 http-response ^https:\/\/appcloud2\.zhihu\.com\/v3\/config script-path = https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js, requires-body = true, tag = 知乎拦截服务器推送配置, enable={vihu_enable}
 http-response ^https:\/\/m-cloud\.zhihu\.com\/api\/cloud\/config\/all\? script-path = https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js, requires-body = true, tag = 知乎拦截服务器推送配置, enable={vihu_enable}
+
+# > 招商证券
+# hostname = marketing.cmschina.com
+# 首页和理财页面横幅广告
+http-response ^https:\/\/marketing\.cmschina\.com\/mkt\/api\/v1\?.* script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/cmschina/cmschina.js, requires-body=true, timeout=20, tag=招商证券去广告
 
 # > 掌上公交
 http-response ^https?:\/\/wx\.mygolbs\.com\/WxBusServer\/ApiData\.do script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/zhangshanggongjiao.js, requires-body=true, timeout=60, tag=掌上公交小程序广告, enable={vhuhgsjn_enable}
