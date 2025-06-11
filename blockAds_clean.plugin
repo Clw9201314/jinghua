@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-06-09 14:50:00
+#!date=2025-06-10 16:02:17
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -43,6 +43,7 @@ aiqiyi_enable = switch,true,false,tag=爱奇艺-脚本开关
 blued_enable = switch,true,false,tag=Blued-脚本开关
 bdduditu_enable = switch,true,false,tag=百度地图-脚本开关
 bddutpba_enable = switch,true,false,tag=百度贴吧-脚本开关
+lawson_enable = switch,true,false,tag=罗森点点-脚本开关
 
 # > 哔哩哔哩
 bilibili_enable = switch,true,false,tag=哔哩哔哩-脚本开关
@@ -1817,8 +1818,10 @@ https?:\/\/helper\.2bulu\.com\/(greenPea\/queryTasks|proSpecial\/allData|saveSpl
 # > 旅途随身听
 # hostname = www.1314zhilv.com
 ^https?:\/\/www\.1314zhilv\.com\/ltsstnew\/(guideScenic\/getRecentlyUpdatedScenic|city\/getWeatherByCityName) reject-dict
-
-
+  
+# > 罗森点点
+# hostname = *.yorentown.com
+^https:\/\/plt\.yorentown\.com\/pltapp\/v1\/banner reject-dict
 
 # >>>>>>>>>>>>>>> ✅ M ✅ <<<<<<<<<<<<<<
 # > MIX
@@ -4107,8 +4110,10 @@ http-response ^https?:\/\/api\.coolapk\.com\/v6\/page\/dataList\? script-path=ht
 # > 旅途随身听
 # 首页北京城市导览图片,首页上方轮播图片净化
 http-response ^https?:\/\/www\.1314zhilv\.com\/ltsstnew\/(common\/getJGQIconNew|city\/getAllBannelByCity) script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lvtusuishenting/ltsst-ad.js, requires-body=true, timeout=60, tag=旅途随身听, enable={lvtusvuftk_enable}
-
-
+  
+# > 罗森点点
+http-response ^https:\/\/lawsonapi\.yorentown\.com\/area\/sh-lawson\/app\/v1\/ script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lawson.js, requires-body=true, timeout=60, tag=罗森点点, enable={lawson_enable}
+http-response ^https:\/\/lawsonapi\.yorentown\.com\/portal\/app\/globalLaunch\/listAdvert script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/lawson.js, requires-body=true, timeout=60, tag=罗森点点, enable={lawson_enable}
 
 # >>>>>>>>>>>>>>> ✅ M ✅ <<<<<<<<<<<<<<
 # > 买单吧
