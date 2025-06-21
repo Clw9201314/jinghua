@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-06-11 22:02:17
+#!date=2025-06-20 23:40:17
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -1926,12 +1926,15 @@ http:\/\/dili.sqcosmos.com\/jiekou\/endpage\/ad reject-dict
 # 屏蔽更新
 ^http:\/\/ebk\.17u\.cn\/tctrafficappversionadmin\/api\/getLatestVersionApp reject-dict
 
-# > 咪咕
-# hostname = *.cmvideo.cn
-^https?:\/\/gg\w+?\.cmvideo\.cn\/v\d\/iflyad\/ reject-200
-^https?:\/\/ggic\d?\.cmvideo\.cn\/ad\/ reject-200
-^https?:\/\/ggx\.cmvideo\.cn\/request\/ reject-200
-^https?:\/\/.+?\/cdn-adn\/ reject-200
+# > 咪咕视频
+# hostname = ggc.miguvideo.com, display*-sc.miguvideo.com, recommend-dy.miguvideo.com, app-sc.miguvideo.com, common-sc.miguvideo.com, ggx*.miguvideo.com
+^https:\/\/ggc\.miguvideo\.com\/v1\/iflyad\/deliverysystem\/direct\/ reject
+^https:\/\/public-deliver9\.miguvideo\.com\/deliver\/site\/batchMatch\/mergeSpot\/miguvideo\/ reject
+^https:\/\/recommend-dy\.miguvideo\.com\/recommend-dynamic\/dataSource\/v1\/recommend\/merge reject
+^https:\/\/app-sc\.miguvideo\.com\/app-management\/v1\/staticcache\/settings\/miguvideo\/SHARE_PIC reject
+^https:\/\/common-sc\.miguvideo\.com\/videoActivity\/activityList\/ reject
+^https:\/\/display-sc\.miguvideo\.com\/display\/v3\/static\/PERSONAL_CENTER\/ reject
+^https:\/\/ggx\d+\.miguvideo\.com\/request\/sdk reject
 
 # > 秒拍
 # hostname = b-api.ins.miaopai.com
