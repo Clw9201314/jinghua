@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-07-02 19:30:17
+#!date=2025-07-03 21:30:17
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -3409,10 +3409,17 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https?:\/\/venus\.yhd\.com\/memhome\/launchConfig reject
 
 # > 一汽大众
-# hostname = one-app-h5.faw-vw.com
-# 开屏广告 感谢【finch.ftm】分享
-^https?:\/\/one-app-h5\.faw-vw\.com\/prod-api\/mobile\/one-app\/general\/public\/v1\/official_activity\/get_animation_putaway_list\?appkey.* reject-200
-^https?:\/\/one-app-h5\.faw-vw\.com\/prod-api\/mobile\/one-app\/general\/public\/v1\/first_page\/get_carousel_list?appkey.* reject-200
+# hostname = oneapp-api.faw-vw.com
+# 感谢【向晚】分享
+^https?:\/\/oneapp-api\.faw-vw\.com\/search\/firstPage\/getPromptList\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/benefits\/benefitsCard\/getInfo\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/booth\/getBoothList\/v1\?.*showPositionCode=VWAPP_HOME_BUOY mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/booth\/getBoothList\/v1\?.*showPositionCode=VWAPP_(ICE|MEB)_(OPEN_SCREEN_ADS|CAR_ZHIHU_COLLEGE) mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/booth\/getBoothList\/v1\?.*showPositionCode=VWAPP_(ICE|MEB)_HOME_(OWNER_BANNER|PROSPECTS_BANNER|CUSTOM_BANNER|KONGO|CUSTOM_KONGO) mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/(customize\/getCustomizePageName|recommend\/getRecommendInfoFlows)\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/(activity\/getSquareActivityList|theme\/getThemeList|post\/getPostsByTags)\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/(evaluate\/getEvaluateCards)\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":[]}
+^https?:\/\/oneapp-api\.faw-vw\.com\/content\/(collection\/getCollectionList)\/v1\?.* mock-response-body data-type=json status-code=200 data={"returnStatus":"SUCCEED","hasMore":false,"data":{}}
 
 # > 一起考教师
 # hostname = api.17kjs.com
