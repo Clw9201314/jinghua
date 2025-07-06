@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-07-03 21:30:17
+#!date=2025-07-06 10:30:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -89,6 +89,11 @@ pupuicui_enable = switch,true,false,tag=朴朴超市-脚本开关
 quda_enable = switch,true,false,tag=去哒-脚本开关
 reddit_enable = switch,true,false,tag=Reddit-脚本开关
 rfrfuipk_enable = switch,true,false,tag=人人视频-脚本开关
+
+# Spotify
+tab=switch, true, tag=Spotify-移除底栏创建按钮, desc=此开关控制是否移除底栏创建按钮
+useractivity=switch, true, tag=Spotify-启用Apple设备接力, desc=此开关控制是否使用Apple设备接力
+
 soul_enable = switch,true,false,tag=Soul-脚本开关
 sudaxnyr_enable = switch,true,false,tag=苏打校园APP-脚本开关
 smzdm_enable = switch,true,false,tag=什么值得买-脚本开关
@@ -369,6 +374,14 @@ DOMAIN-KEYWORD, -ad-sign.byteimg.com, REJECT
 DOMAIN-KEYWORD, -ad.byteoversea.com, REJECT
 DOMAIN-KEYWORD, video-cn.snssdk.com, REJECT
 DOMAIN-KEYWORD, asiad.byteactivity, REJECT
+
+
+
+# >>>>>>>>>>>>>>> ✅ S ✅ <<<<<<<<<<<<<<
+# > Spotify
+AND, ((DOMAIN, spclient.wg.spotify.com), (PROTOCOL, QUIC)), REJECT
+AND, ((DOMAIN, gae2-spclient.spotify.com), (PROTOCOL, QUIC)), REJECT
+AND, ((DOMAIN, guc3-spclient.spotify.com), (PROTOCOL, QUIC)), REJECT
 
 
 
@@ -2325,10 +2338,10 @@ https://api.rr.tv/storage/business/rootName/app/homePage\?dataType=JSON reject-d
 
 
 # >>>>>>>>>>>>>>> ✅ S ✅ <<<<<<<<<<<<<<
-# > spotify
-# hostname = spclient.wg.spotify.com, api*.musical.ly
-^https?:\/\/spclient\.wg\.spotify\.com\/(ad-logic|ads|.+ad_slot|.+banners|.+canvases|.+cards|.+crashlytics|.+doubleclick.net|.+enabled-tracks|.+event|.+sponsored|.+promoted|.+promoted_offer) reject-img
-^https?:\/\/api\d?\.musical\.ly\/api\/ad\/ reject-img
+# > Spotify
+# hostname = gae2-spclient.spotify.com, guc3-spclient.spotify.com, spclient.wg.spotify.com
+^https?:\/\/(?:gae2-spclient|guc3-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ reject-dict
+^https?:\/\/(gae2-spclient|guc3-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone header https://$1.spotify.com/artistview/v1/artist/$2&platform=ipad
 
 # > Soul
 # hostname = 47.110.187.87, ssp.soulapp.cn, chat-live.soulapp.cn, api-chat.soulapp.cn, api-account.soulapp.cn, api-global.soulapp.me, api-a.soulapp.cn, api-pay.soulapp.cn, gateway-mobile-gray.soulapp.cn, post.soulapp.cn, api-user.soulapp.cn
@@ -4230,6 +4243,9 @@ http-response https://api.rr.tv/user/profile script-path=https://raw.githubuserc
 
 
 # >>>>>>>>>>>>>>> ✅ S ✅ <<<<<<<<<<<<<<
+# > Spotify
+http-response ^https?:\/\/(?:gae2-spclient|guc3-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service) script-path=https://raw.githubusercontent.com/001ProMax/Surge/refs/heads/main/Script/Spotify.Crack.Dev.js, requires-body=true, binary-body-mode=true, timeout=3, argument=[{tab},{useractivity}], tag=Spotify去广告
+
 # > Soul
 # 替换信息收集
 http-request ^https:\/\/data-collector\.soulapp\.cn\/api\/data\/report\/v\d script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/template/req_replace_body.js, requires-body=true, timeout=60, tag=req_replace_body, enable={soul_enable}
