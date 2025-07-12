@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-07-08 20:00:00
+#!date=2025-07-11 20:00:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -3153,15 +3153,15 @@ https?:\/\/(ipv4|interface\d?)\.music\.163.com\/e?api\/ad reject-dict
 
 # > 小宇宙
 # hostname = api.xiaoyuzhoufm.com
-# 开屏广告
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/flash- reject-dict
-# 移除ai总结
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/ai-summary reject-dict
-# 会员横幅设为不可点击
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/membership\/platform reject-dict
-# 移除小宇宙搜索框内容
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/search\/get-(?>preset|express) reject-dict
-^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/category\/list-daily-suggestion reject-dict
+# 首页净化
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v1\/discovery-feed\/list response-body-json-jq '.data |= map(select(.type != "DISCOVERY_HEADER" and .type != "DISCOVERY_BANNER"))'
+# 移除开屏广告
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/flash reject-dict
+# 移除单集总结和ai总结
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/ai reject-dict
+# 移除搜索框内容
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/search\/get reject-dict
+^https?:\/\/api\.xiaoyuzhoufm\.com\/v\d\/category reject-dict
 
 # > 小芒
 # hostname = mgesq.api.mgtv.com, *.hitv.com
@@ -3305,45 +3305,48 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https?:\/\/ci\.xiaohongshu\.com\/system_config\/watermark reject-img
 
 # > 喜马拉雅
-# hostname = *.xima*.*.com, *.xmcdn.*
-# 修复轮播Ad失效Bug
-^https?:\/\/.*\.xima.*\.com\/discovery-feed\/focus\/queryF reject
-# 播放页_Live
-^https?:\/\/.*\.xima.*\.com\/mobile-playpage\/view\/ reject
-# MyInfo红点提醒
-^https?:\/\/.*\.xima.*\.com\/chaos-notice-web\/v1\/message\/preview\/list reject
-# 屏蔽大红包Tips
-^https?:\/\/.*\.xima.*\.com\/social-web\/bottomTabs\/dynamicEntrance\/status reject
-# 屏蔽gif弹窗Ad
-^https?:\/\/.*\.xmcdn\.com\/\w{8}\/\w{4}-\w{16}\/.+gif$ reject
-# gslb
-^https?:\/\/gslb.*\.xima.*\.com\/ reject
-# 屏蔽Aged请求
-^https?:\/\/.*\.xima.*\.com\/(dog-portal\/checkOld|(child-mobile\/child|aged-mobile\/aged)\/mode\/query) reject
-# 部分Tab弹窗
-^https?:\/\/.*\.xima.*\.com\/discovery-feed\/isShowUserGiftPendant reject
-# 屏蔽红点提示
-^https?:\/\/.*\.xima.*\.com\/mobile-user\/unread reject
-# 屏蔽minor请求
-^https?:\/\/.*\.xima.*\.com/mobile-user/minorProtection/pop reject
-# 屏蔽隐私搜集
-^https?:\/\/.*\.xima.*\.com\/collector\/xl\/v\d reject
-# 屏蔽版本更新
-^https?:\/\/.*\.xima.*\.com\/butler-portal\/versionCheck reject
-# 屏蔽开屏广告
-^https?:\/\/(adse\.wsa|adse|adbehavior|xdcs-collector)\.xima.*\.com\/.* reject
-# 屏蔽位置请求
-^https?:\/\/.*\.xima.*\.com\/mobile\/discovery\/v\d\/location reject
-# 屏蔽热搜词
-^https?:\/\/.*\.xima.*\.com\/(hub\/)?hotWord reject
-# 屏蔽热搜board
-^https?:\/\/.*\.xima.*\.com\/(hub\/)?hotWordBillboard reject
-# 屏蔽搜索框定时_Ad
-^https?:\/\/.*\.xima.*\.com\/(hub)?guideWord reject
-# 屏蔽实时Ad请求
-^https?:\/\/.*\.xima.*\.com\/api\/v\d\/adRealTime reject
-# 屏蔽ting_Ad
-^https?:\/\/.*\.xima.*\.com\/ting\/(loading|feed|home)? reject
+# hostname = gslbali.ximalaya.com, search.ximalaya.com, searchwsa.ximalaya.com, mobile.ximalaya.com, mobilehera.ximalaya.com, mobwsa.ximalaya.com, m.ximalaya.com, mwsa.ximalaya.com
+^https:\/\/(search|searchwsa)\.ximalaya\.com\/hub\/(guideWord|hotWord)V\d\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/mix\/ response-body-json-jq '.heData |= map(select(.item.list[].bizType != "SceneListenCard"))'
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-feed\/v\d\/scene\/listen\/refresh\? reject-dict
+
+^https:\/\/(m|mwsa)\.ximalaya\.com\/x-web-activity\/signIn\/getHomePageSignInInfo\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/discovery-category\/customCategories\/ response-body-json-jq '.categoryList |= map(.itemList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))) | .customCategoryList |= map(select(.title | test("直播|123狂欢节|SVIP"; "i") | not))'
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/football-portal\/diff2\/batch\? response-body-json-del json.ad json.toc
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/nexus-web\/v\d\/tabs\/customTabs\? response-body-json-jq '.data.feedTabs |= map(select(.name != "大赛"))'
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/tagAlbumList$ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/track-feed\/v\d\/chase\/recommend\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/social-web\/follow-stream\/category\/\d+$ reject-dict
+
+^https:\/\/(m|mwsa)\.ximalaya\.com\/community\/square\/v\d\/stream\? mock-response-body data-type=json data="{"data":{"cards":[{"content":{},"type":"RECOMMENDS"}]},"ret":0}" status-code=200
+
+^https:\/\/mobwsa\.ximalaya\.com\/mobile-playpage\/playpage\/tabs\/v2\/ response-body-json-del data.playpage.resourceMap.defaultResource data.playpage.resourceMap.playPageTip
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommendContentV\d\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-playpage\/playpage\/recommend\/resource\/allocation\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/firework-portal\/v\d+\/sync\? reject-dict
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/business-sale-promotion-guide-mobile-web\/popup\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/app-skin-service\/skin\/setting\/info\/ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ response-body-json-del data.freeListenV2
+
+^https:\/\/(live|livewsa)\.ximalaya\.com\/lamia\/v1\/subscribe\/status$ reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/homePage\/ response-body-json-jq '.data.serviceModule.entrances |= map(select(.name == "全部服务"))'
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/subscribe\/v\d\/subscribe\/recommend\? reject-dict
+
+^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/purchased\/recommend\/ reject-dict
 
 
 
@@ -4380,18 +4383,6 @@ http-response ^https?:\/\/(edith|rec|www)\.xiaohongshu\.com\/api\/sns\/(v4\/note
 # 评论区图片、live图水印，表情包下载
 http-response ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/(v5\/note\/comment\/list|v3\/note\/comment\/sub_comments)\? script-path=https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js, requires-body=true, timeout=60, tag=小红书评论区去水印存储, enable={xnhsuu_enable}
 http-response ^https:\/\/edith\.xiaohongshu\.com\/api\/sns\/v1\/interaction\/comment\/video\/download\? script-path=https://github.com/fmz200/wool_scripts/raw/main/Scripts/xiaohongshu/xiaohongshu.js, requires-body=true, timeout=60, tag=小红书评论区去水印下载, enable={xnhsuu_enable}
-
-# > 喜马拉雅
-# 首页顶部去除直播
-http-response ^https?:\/\/.*\.xima.*\.com\/discovery-category\/customCategories script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xmly_json.js, requires-body=true, timeout=60, tag=喜马拉雅首页顶部去除直播, enable={ximalaya_enable}
-# 屏蔽首页横幅_Ad
-http-response ^https?:\/\/.*\.xima.*\.com\/focus-mobile\/focusPic script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xmly_json.js, requires-body=true, timeout=60, tag=喜马拉雅屏蔽首页横幅_Ad, enable={ximalaya_enable}
-# 屏蔽首页动态_Ad
-http-response ^https?:\/\/.*\.xima.*\.com\/discovery-feed\/v\d\/mix script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xmly_json.js, requires-body=true, timeout=60, tag=喜马拉雅屏蔽首页动态_Ad, enable={ximalaya_enable}
-# 屏蔽Tab页滚动_Ad
-http-response ^https?:\/\/.*\.xima.*\.com\/discovery-category\/v\d/category script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xmly_json.js, requires-body=true, timeout=60, tag=喜马拉雅屏蔽Tab页滚动_Ad, enable={ximalaya_enable}
-# 去除我的页面Ad_Tag
-http-response ^https?:\/\/.*\.xima.*\.com\/mobile-user\/v\d\/homePage script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/xmly_json.js, requires-body=true, timeout=60, tag=喜马拉雅去除我的页面Ad_Tag, enable={ximalaya_enable}
 
 
 
