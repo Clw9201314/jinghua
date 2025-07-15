@@ -97,7 +97,6 @@ useractivity=switch, true, tag=Spotify-启用Apple设备接力, desc=此开关�
 soul_enable = switch,true,false,tag=Soul-脚本开关
 sudaxnyr_enable = switch,true,false,tag=苏打校园APP-脚本开关
 smzdm_enable = switch,true,false,tag=什么值得买-脚本开关
-tf_enable = switch,true,false,tag=TestFlight国区-重写开关
 tcbc_enable = switch,true,false,tag=淘宝-脚本开关
 tgxyxbwf_enable = switch,true,false,tag=腾讯新闻-脚本开关
 vgtime_enable = switch,true,false,tag=vgTime-脚本开关
