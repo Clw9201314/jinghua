@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-07-21 20:00:00
+#!date=2025-07-26 22:00:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -3577,11 +3577,10 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https:\/\/api5\.youonbike\.com\/ibike-rest-service\/user\/fun_IBF_GetAdvert reject-dict
 
 # > 云快充 微信小程序
-# hostname = web-stable-cdn.ykccn.com, gw3.ykccn.com
-^https?:\/\/web-stable-cdn\.ykccn\.com\/sp-img-2023\/common\/weCom-open reject-img
-^https?:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/appAdvertising\/ reject-dict
-^https?:\/\/gw3\.ykccn\.com\/activityServer\/app\/commandAd reject
-^https?:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/charge\/activity\/package\/newest reject-dict
+# hostname = gw3.ykccn.com
+^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/enterpriseWeChatConfig\/app\/queryCityConfig reject-dict
+^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/appAdvertising\/queryAdvertisingByParams reject-dict
+^https:\/\/gw3\.ykccn\.com\/api\/omp\/mt\/charge\/activity\/package\/newest reject-dict
 
 # > 游民星空
 # hostname = *.gamersky.com
