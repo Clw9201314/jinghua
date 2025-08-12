@@ -11,7 +11,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-08-10 10:37:00
+#!date=2025-08-11 20:37:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -144,9 +144,6 @@ DOMAIN,app.biliapi.com,REJECT
 DOMAIN,api.biliapi.net,REJECT
 DOMAIN,app.biliapi.net,REJECT
 DOMAIN-SUFFIX,chat.bilibili.com,REJECT
-# 开屏广告
-#URL-REGEX, ^http:\/\/upos-sz-static\.bilivideo\.com\/ssaxcode\/\w{2}\/\w{2}\/\w{32}-1-SPLASH, REJECT-DICT
-#URL-REGEX, ^http:\/\/[\d\.]+:8000\/v1\/resource\/\w{32}-1-SPLASH, REJECT-DICT
 
 
 
@@ -302,6 +299,22 @@ DOMAIN,api.mobrtb.com,REJECT
 DOMAIN,ssp.maplehaze.cn,REJECT
 DOMAIN-SUFFIX,lnk0.com,REJECT
 
+
+# >>>>>>>>>>>>>>> ✅ L ✅ <<<<<<<<<<<<<<
+# > Line
+URL-REGEX, "^https:\/\/a\.line\.me\/lass\/api\/v\d\/ads$", REJECT-DROP
+URL-REGEX, "^https:\/\/a\.line\.me\/oa\/v\d\/e$", REJECT-DROP
+URL-REGEX, "^https:\/\/a\.line\.me\/cs\/v\d\/oa$", REJECT-DROP
+URL-REGEX, "^https:\/\/w\.line\.me\/adp\/api\/ad\/v\d\/", REJECT-DROP
+URL-REGEX, "^https:\/\/crs-event\.line\.me\/v\d\/imp", REJECT-DROP
+URL-REGEX, "^https:\/\/obs\.line-scdn\.net\/0h.+\/(o|m)\d+x\d+$", REJECT-DROP
+URL-REGEX, "^https:\/\/obs\.line-scdn\.net\/0hGH\d", REJECT-DROP
+URL-REGEX, "^https:\/\/obs\.line-scdn\.net\/0h.+\/\d+p\.mp4$", REJECT-DROP
+URL-REGEX, "^https:\/\/scdn\.line-apps\.com\/lan\/image\/line\/bannerImageEvent\/", REJECT-DROP
+URL-REGEX, "^https:\/\/scdn\.line-apps\.com\/lan\/document\/pageEvent\/line\/ios\/", REJECT-DROP
+URL-REGEX, "^https:\/\/sch\.line\.me\/api\/v\d\/ads$", REJECT-DROP
+URL-REGEX, "^https:\/\/uts-front\.line-apps\.com\/event$", REJECT-DROP
+URL-REGEX, "^https:\/\/uts-front\.line-apps\.com\/settings$", REJECT-DROP
 
 
 # >>>>>>>>>>>>>>> ✅ Q ✅ <<<<<<<<<<<<<<
@@ -1652,6 +1665,16 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 ^https?:\/\/api\.kkmh\.com\/v\d\/ad\/show reject-200
 ^https?:\/\/api\.kkmh\.com\/v\d\/advertisement\/ reject-200
 
+# > 快手
+# hostname = az4-api.ksapisrv.com, az4-api-idc.ksapisrv.com, az2-api.ksapisrv.com, az2-api-idc.ksapisrv.com, apissl.gifshow.com, apissl.ksapisrv.com, az2-api-js.gifshow.com, az2-live.ksapisrv.com
+^https:\/\/(apissl|az2-api(-js|-idc)?)\.(gifshow|ksapisrv)\.com\/rest\/system\/startup\? response-body-json-del reskinConfig sidebarExSquareStyle.moreList sidebarExSquareStyle.topList
+^https:\/\/(apissl|az2-api(-js|-idc)?)\.(gifshow|ksapisrv)\.com\/rest\/system\/startup\? response-body-json-jq '.sidebarExSquareStyle.commonlyUsedList |= map(select(.title == "设置" or .title == "历史记录" or .title == "草稿箱" or .title == "我的钱包" or .title == "小程序" or .title == "未成年人模式" or .title == "官方客服" or .title == "内容偏好" or .title == "离线模式" or .title == "稍后再看" or .title == "举报中心" or .title == "挂件"))'
+^https:\/\/az2-live\.ksapisrv\.com\/rest\/n\/live\/feed\/square\/refresh\? response-body-json-del data.banners
+^https:\/\/az2-api\.ksapisrv\.com\/rest\/n\/taskCenter\/task\/report\? reject-dict
+^https:\/\/az2-api\.ksapisrv\.com\/rest\/n\/ad\/ reject-dict
+^https:\/\/az4-api(-idc)?\.ksapisrv\.com\/rest\/n\/feed\/selectionFast\? response-body-json-jq 'if (.feeds | type) == "array" then .feeds |= map(select(.ad | not)) else . end'
+^https:\/\/az2-api-js\.gifshow\.com\/rest\/n\/user\/profile\/v2\? response-body-json-del postRecommends
+
 # > 酷我音乐
 # hostname = audiobookpay.kuwo.cn, mgxhtj.kuwo.cn, nmobi.kuwo.cn, searchrecterm.kuwo.cn, musicpay.kuwo.cn, vip1.kuwo.cn
 # 广告
@@ -1711,36 +1734,27 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 
 # >>>>>>>>>>>>>>> ✅ L ✅ <<<<<<<<<<<<<<
 # > Line
-# hostname = a.line.me, ad.line-scdn.net, buy.line.me, cix.line-apps.com, crs-event.line.me, d.line-scdn.net, gw.line.naver.jp, legy.line-apps.com, nelo2-col.linecorp.com, obs.line-scdn.net, scdn.line-apps.com, sch.line.me, static.line-scdn.net, uts-front.line-apps.com, w.line.me
-https:\/\/a\.line\.me\/er\/lads\/v\d\/ei\? reject-img
-https:\/\/a\.line\.me\/er\/l.*\/v\d\/event\/image reject-img
-https:\/\/a\.line\.me\/lass\/api\/v\d\/ads$ reject
-https:\/\/a\.line\.me\/oa\/v\d\/e$ reject
-https:\/\/a\.line\.me\/cs\/v\d\/oa$ reject
-https:\/\/ad\.line-scdn\.net\/0h.+\/(o|m)\d+x\d+$ reject-img
-https:\/\/gw\.line\.naver\.jp\/ext\/lgfp\/lad\/v1$ reject
-https:\/\/gw\.line\.naver\.jp\/lass\/api\/v1\/ads$ reject
-https:\/\/gw\.line\.naver\.jp\/tr\/event$ reject
-https:\/\/legy\.line-apps\.com\/ext\/lgfp\/lad\/v1$ reject
-https:\/\/legy\.line-apps\.com\/ext\/smartch\/banner\/sch\/v1$ reject
-https:\/\/legy\.line-apps\.com\/tr\/event$ reject
-https:\/\/w\.line\.me\/adp\/api\/ad\/v\d\/ reject
-https:\/\/buy\.line\.me\/api\/graphql\?variables reject
-https:\/\/crs-event\.line\.me\/v\d\/imp reject
-https:\/\/obs\.line-scdn\.net\/0h.+\/(o|m)\d+x\d+$ reject
-https:\/\/obs\.line-scdn\.net\/0hGH\d reject
-https:\/\/obs\.line-scdn\.net\/0h.+\/\d+p\.mp4$ reject
-https:\/\/obs\.line-scdn\.net\/r\/linecrs\/.+\/m180x180$ reject-img
-https:\/\/d\.line-scdn\.net\/lcp-prod-photo\/20.+\.(jpg|jpeg|png) reject-img
-https:\/\/cix\.line-apps\.com\/R4\? reject
-https:\/\/scdn\.line-apps\.com\/appresources\/moretab\/list\.json reject
-https:\/\/scdn\.line-apps\.com\/lan\/image\/line\/bannerImageEvent\/ reject
-https:\/\/scdn\.line-apps\.com\/lan\/document\/pageEvent\/line\/ios\/ reject
-https:\/\/sch\.line\.me\/api\/v\d\/ads$ reject
-https:\/\/uts-front\.line-apps\.com\/event$ reject
-https:\/\/uts-front\.line-apps\.com\/settings$ reject
-https:\/\/static\.line-scdn\.net\/ad-sdk\/ reject
-https:\/\/nelo2-col\.linecorp\.com\/_store$ reject
+# hostname = a.line.me, ad.line-scdn.net, w.line.me, gw.line.naver.jp, lan.line.me, buy.line.me, crs-event.line.me, obs.line-scdn.net, d.line-scdn.net, scdn.line-apps.com, sch.line.me, static.line-scdn.net, nelo2-col.linecorp.com, uts-front.line-apps.com, cix.line-apps.com, scdn.line-apps.com, legy.line-apps.com, ec-bot-obs.line-scdn.net
+^https:\/\/a\.line\.me\/er\/lads\/v\d\/ei\? reject-img
+^https:\/\/a\.line\.me\/er\/l.*\/v\d\/event\/image reject-img
+^https:\/\/ad\.line-scdn\.net\/0h reject
+^https:\/\/ec-bot-obs\.line-scdn\.net\/0h[-0-9a-zA-Z_]{50,} reject-img
+^https:\/\/gw\.line\.naver\.jp\/ext\/lgfp\/lad\/v1$ reject
+^https:\/\/gw\.line\.naver\.jp\/lass\/api\/v1\/ads$ reject
+^https:\/\/gw\.line\.naver\.jp\/tr\/event$ reject
+^https:\/\/lan\.line\.me\/v1\/line\/ios reject
+^https:\/\/legy\.line-apps\.com:443\/ext\/lgfp\/lad\/v1$ reject
+^https:\/\/legy\.line-apps\.com:443\/ext\/smartch\/banner\/sch\/v1$ reject
+^https:\/\/legy\.line-apps\.com\/line\.gcs\.GcsModuleService\/GetModulesByModuleIds$ reject
+^https:\/\/legy\.line-apps\.com:443\/tr\/event$ reject
+^https:\/\/web-mmap-pay\.line-apps\.com\/tw\/liff\/campaign\/v1\/aggregate\/ad\/banner\/ reject-img
+^https:\/\/buy\.line\.me\/api\/graphql\?variables reject
+^https:\/\/obs\.line-scdn\.net\/r\/linecrs\/.+\/m180x180$ reject-img
+^https:\/\/d\.line-scdn\.net\/lcp-prod-photo\/20.+\.(jpg|jpeg|png) reject-img
+^https:\/\/cix\.line-apps\.com\/R4\? reject
+^https:\/\/scdn\.line-apps\.com\/appresources\/moretab\/list\.json reject
+^https:\/\/static\.line-scdn\.net\/ad-sdk\/ reject
+^https:\/\/nelo2-col\.linecorp\.com\/_store$ reject
 
 # > 拉卡拉
 # hostname = gmp.lakala.com, wallet.lakala.com
@@ -4116,9 +4130,6 @@ http-response ^https?:\/\/api\.gotokeep\.com\/homepage\/v\d\/tab script-path=htt
 http-response ^https?:\/\/api\.gotokeep\.com\/nuocha\/course\/v\d/\w+\/preview script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js, requires-body=true, timeout=60, tag=keep, enable={keep_enable}
 # 我的运动页面去除下方推荐
 http-response ^https?:\/\/api\.gotokeep\.com\/sportpage\/sport\/v\d\/mysport script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/keep.js, requires-body=true, timeout=60, tag=keep, enable={keep_enable}
-
-# > 快手
-http-response ^https?:\/\/open\.e\.kuaishou\.com\/rest\/e\/v\d\/open\/univ$ script-path=https://raw.githubusercontent.com/app2smile/rules/master/js/adsense.js, requires-body=true, timeout=60, tag=快手, enable={kkuz_enable}
 
 # > 夸克
 http-response ^https?:\/\/open-cms-api\.(uc|quark)\.cn\/open-cms script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/quark.js, requires-body=true, timeout=60, tag=夸克, enable={kxke_enable}
