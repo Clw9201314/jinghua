@@ -1807,6 +1807,11 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 # hostname = api.club.lenovo.cn
 ^https?:\/\/api\.club\.lenovo\.cn\/common\/open_ad reject
 
+# > 联想至像打印
+# hostname = abcapi.lenovoimage.com
+# app开屏
+^https:\/\/abcapi\.lenovoimage\.com\/v1\/promote\/startup reject-dict
+
 # > 拦截100
 # hostname = tagit.hyhuo.com
 ^https?:\/\/tagit\.hyhuo\.com\/recover\/list reject
