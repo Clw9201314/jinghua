@@ -3433,9 +3433,17 @@ https://mgesq.api.mgtv.com/v2/user/center/icon reject-dict
 ^https:\/\/(mobile|mobilehera|mobwsa)\.ximalaya\.com\/mobile-user\/v\d\/purchased\/recommend\/ reject-dict
 
 # > 笑容加
-# hostname = www.myusmile.online
-# 一款电动儿童牙刷app，开屏广告
-^https:\/\/www\.myusmile\.online\/user\/userTagRecord\/popup reject-dict
+# hostname = myusmile.online, wemallh5.usmile.com, www.myusmile.online
+# 屏蔽更新提示
+^https?:\/\/myusmile\.online\/user\/version\/requestAppUpdate reject-dict
+# 屏蔽固件更新
+^https?:\/\/myusmile\.online\/user\/version\/requestFirmwareUpdate\/ reject
+# 商城页弹窗
+^https?:\/\/wemallh5\.usmile\.com\/api\/sp-portal\/store\/usmile\/activity\/dayCheck\?pop reject-dict
+# 首页弹窗
+^https?:\/\/www\.myusmile\.online\/user\/userTagRecord\/popup reject
+# 我的页推广
+http-response ^https?:\/\/www\.myusmile\.online\/user\/plaqueTopic\/selectByType script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/usmile.js
 
 
 # >>>>>>>>>>>>>>> ✅ Y ✅ <<<<<<<<<<<<<<
