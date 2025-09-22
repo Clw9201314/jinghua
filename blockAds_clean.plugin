@@ -10,7 +10,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-09-13 11:22:00
+#!date=2025-09-21 20:00:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -1195,9 +1195,10 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 reject
 ^https?:\/\/gateway-api\.dushu365\.com\/chief-orch\/config\/config\/v100\/appConfig reject
 
 # > 丰巢
-# hostname = external.fcbox.com, dsp.fcbox.com, consumer.fcbox.com
+# hostname = external.fcbox.com, dsp.fcbox.com, consumer.fcbox.com, rtm.fcbox.com
 ^https:\/\/dsp\.fcbox\.com\/adSearch\/get\? reject
 ^https:\/\/external\.fcbox\.com\/wxgw\/post\/suggestion\/query reject
+^https:\/\/rtm\.fcbox\.com\/rtsWeb\/api\/resource\/ad\/queryAd reject
 # 已无法MITM
 ^https?:\/\/consumer\.fcbox\.com\/v\d\/ad\/ reject
 
