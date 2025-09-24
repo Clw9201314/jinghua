@@ -10,7 +10,7 @@
 #!system=iOS, iPadOS
 #!system_version = 
 #!loon_version = 
-#!date=2025-09-21 20:00:00
+#!date=2025-09-23 20:00:00
 #!remark=下方的所有规则都标注了对应的hostname，可能存在错误或者遗漏，欢迎反馈。对于无法/可选MITM的hostname都特别做了“如开启可自行添加主机名”提示，如果提示后面没有标注主机名则包含所有主机名，否则只包含提示语后面的主机名。
 #############################################
 # "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
@@ -932,16 +932,38 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 reject
 
 
 # >>>>>>>>>>>>>>> ✅ D ✅ <<<<<<<<<<<<<<
-# > 大疆商城
-# hostname = se-api.djiits.com
-# 去开屏广告
-^https:\/\/se-api\.djiits\.com\/api\/components\/launch_ad\.json\?abbrv_url=1&country=cn&language=zh-CN reject-dict
-
 # > DLabel云标签
 # hostname = dudian-oss.oss-cn-shenzhen.aliyuncs.com, imagepc.ctaiot.com
 # 去开屏广告
 ^https:\/\/imagepc\.ctaiot\.com\/dlabel\/0\/startpage reject
 ^https:\/\/dudian-oss\.oss-cn-shenzhen\.aliyuncs\.com\/dlabel\/1\/startpage reject
+
+# > 大众点评
+# hostname = 103.37.155.60, *.dianping.com, img.meituan.net, p.meituan.com, rms.meituan.com, www.dpfile.com, awp-assets.meituan.net, s3plus.meituan.net, p*.meituan.net, ddplus.meituan.net
+# 开屏广告
+^https?:\/\/103\.37\.155\.60\/fetch - reject
+^https?:\/\/catdot\.dianping\.com\/broker-service\/hijack - reject
+^https?:\/\/mapi\.dianping\.com\/mapi\/operating\/(?>indexopsmodules|loadsplashconfig) - reject
+^https?:\/\/mapi\.dianping\.com\/mapi\/intelliindex - reject-dict
+^https?:\/\/mapi\.dianping\.com\/wdrpreload\/userprediction - reject
+^https?:\/\/mapi\.dianping\.com\/adshopping - reject
+^https?:\/\/img\.meituan\.net\/goodsawardpic\/\w+\.gif - reject-img
+^https?:\/\/p\.meituan\.com\/api\/privacy\/config - reject
+^https?:\/\/rms\.meituan\.com\/api\/v\d\/rmsmina\/c\/queryWechatAdvertisement - reject-dict
+^https?:\/\/www\.dpfile\.com\/app\/fecommonservice-lottie\/ugc-write-done\/media - reject
+^https?:\/\/www\.dpfile\.com\/picasso\/picasso-qa\/src\/AnswerList\/AnswerList-bundle - reject
+^https?:\/\/www\.dpfile\.com\/sc\/indexpromotion - reject
+^https?:\/\/catfront\.dianping\.com\/api\/metric\?v=\d&p=rn_gcbu_mrn-joy-poidetail - reject
+^https?:\/\/awp-assets\.meituan\.net\/hfe\/fep\/\w+\.json - reject
+^https?:\/\/s3plus\.meituan\.net\/ocean-blk-index\/index\/blk_conf - reject
+^https?:\/\/p\d\.meituan\.net\/nrpresourcevenus\/\w+\.gif - reject-img
+^https?:\/\/p\d\.meituan\.net\/travelcube\/(?!c129a661)\w+\.gif - reject-img
+^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/(?>ehc|titansx|ddblue|edfu)\/ - reject
+
+# > 大疆商城
+# hostname = se-api.djiits.com
+# 去开屏广告
+^https:\/\/se-api\.djiits\.com\/api\/components\/launch_ad\.json\?abbrv_url=1&country=cn&language=zh-CN reject-dict
 
 # > 大麦
 # hostname = acs.m.taobao.com, amdc.m.taobao.com
@@ -4098,7 +4120,9 @@ http-response ^https?:\/\/gg\.caixin\.com\/s\?z=caixin&op=1&c=3362 script-path=h
 # >>>>>>>>>>>>>>> ✅ D ✅ <<<<<<<<<<<<<<
 # > 大众点评
 # 开屏广告
-http-response ^https?:\/\/img\.meituan\.net\/dpmobile\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评开屏广告, enable={davsdmpk_enable}
+http-response ^https?:\/\/img\.meituan\.net\/dpmobile\/ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+http-response ^https?:\/\/img\.meituan\.net\/goodsawardpic\/\w+\.(?!gif)\w+$ script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
+http-response ^https?:\/\/ddplus\.meituan\.net\/v\d\/mss_\w+\/picassovc script-path=https://raw.githubusercontent.com/zirawell/R-Store/main/Res/Scripts/AntiAd/dianping.js, requires-body=true, timeout=60, tag=大众点评, enable={davsdmpk_enable}
 
 # > 动画疯
 # (黑屏25秒)
