@@ -806,13 +806,6 @@ IP-CIDR6, 2402:4e00:1200:ed00:0:9089:6dac:96b6/128, REJECT, no-resolve
 ^https?:\/\/res\.pizzahut\.com\.cn\/CRM\/phad\/member\/app\/member reject-200
 ^https?:\/\/res\.pizzahut\.com\.cn\/CRM\/phad\/apphome\/apphome reject
 
-# > 百视TV
-# hostname = bp-api.bestv.com.cn, bp-image.bestv.com.cn
-# 开屏广告 【Runestoner】分享
-^https?:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/free\/open\/advertisingV2 reject
-#（倒计时还在）
-^https?:\/\/bp-image\.bestv\.com\.cn\/[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{25}\.jpg reject-200
-
 # > 波点音乐
 # hostname = bd-api.kuwo.cn, h5app.kuwo.cn, bodianimgcdn.kuwo.cn
 # 开屏广告 感谢【林夕】分享
@@ -1315,10 +1308,11 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 reject
 ^https?:\/\/fuwu\.nhsa\.gov\.cn\/ebus\/fuwu\/api\/base\/cms\/iep\/web\/cms\/hmpgcfg\/queryAppHmpgCfgByApp reject
 
 # > 高德地图
-# hostname = m*.amap.com, optimus-ads.amap.com
+# hostname = m*.amap.com, optimus-ads.amap.com, amap-aos-info-nogw.amap.com
 ^https?:\/\/m5\.amap\.com\/ws\/shield\/dsp\/app\/startup\/init\? reject-dict
 ^https?:\/\/m5\.amap\.com\/ws\/valueadded\/ reject
-^https?://optimus-ads.amap.com/uploadimg/[a-zA-Z0-9]+.gif reject-200
+^https?:\/\/optimus-ads\.amap\.com\/uploadimg\/[a-zA-Z0-9]+.gif reject-200
+^https?:\/\/amap-aos-info-nogw\.amap\.com\/ws\/aos\/alimama\/splash_screen_rt reject
 
 # > Google
 # hostname = *.googleapis.com, pagead2.googlesyndication.com
@@ -1735,10 +1729,13 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 # hostname = api.vistopia.com.cn
 ^https?:\/\/api\.vistopia\.com\.cn\/api\/v\d\/home\/advertisement reject
 
-# > 看东方
-# hostname = bp-api.bestv.com.cn
+# > 看东方（百视TV）
+# hostname = bp-api.bestv.com.cn, bp-api.bestv.cn
 # 开屏广告 感谢【树先生】分享
 ^https:\/\/bp-api\.bestv\.com\.cn\/cms\/api\/free\/open\/advertisingV2 reject-dict
+# 开屏广告 感谢【Wish】分享
+^https:\/\/bp-api\.bestv\.cn\/cms\/api\/free\/open\/advertisingV2 response-body-json-jq '.dt = []'
+^https:\/\/bp-api\.bestv\.cn\/cms\/api\/c\/search\/hot\/v(2|4) response-body-json-jq '.dt.hot = [] | .dt.recommand = [] | .dt.bannerList = []'
 
 # > 快递100
 # hostname = p.kuaidi100.com,video-dsp.pddpic.com,t-dsp.pinduoduo.com,images.pinduoduo.com
